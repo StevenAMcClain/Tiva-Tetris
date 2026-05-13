@@ -240,12 +240,6 @@
 #define LOW_BITS            0xFF
 
 
-#define SHIFT_THRESHOLD_1   1
-#define SHIFT_THRESHOLD_2   7
-#define SHIFT_THRESHOLD_3   11
-#define SHIFT_THRESHOLD_4   14
-#define SHIFT_THRESHOLD_5   17
-
 #define JOYSTICK_LEFT       1800
 #define JOYSTICK_RIGHT      2200
 
@@ -271,7 +265,7 @@
 
 #define VOID    0x0000
 
-int Do_Shift(unsigned int xpos, unsigned int ypos, unsigned int cshape);
+int Do_Shift(unsigned int xpos, unsigned int ypos, unsigned int cshape, unsigned int ticks);
 bool Check_Collision(int xref, unsigned int yref, unsigned int shape);
 void Set_Piece(unsigned int xcur, unsigned int ycur, unsigned int pieceshape);
 int Clear_Completed_Lines();

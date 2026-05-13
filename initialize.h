@@ -12,4 +12,7 @@
 
 extern void configure_all(void);
 
+// Return number of sys ticks since last call to SysTick_check()
+extern uint32_t SysTick_check();
+
 #endif /* INITIALIZE_H_ */

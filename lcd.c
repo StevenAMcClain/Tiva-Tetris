@@ -7,7 +7,7 @@
 //    updated for Tiva by: Steven McClain (Apr. 12, 2026)
 //
 
-#include <tiva.h>
+#include "common.h"
 #include "lcd.h"
 
 #include "portbits.h"
@@ -197,8 +197,9 @@ void lcdClear(unsigned int colour)
 
 	// clear all pixels in range
     lcdWrite(CM_RAMWR, isCMD);
-    for (int row = 0; row <= LCD_MAX_Y; row++) {
-        for (int col = 0; col <= LCD_MAX_X; col++) {
+    int row, col;
+    for (row = 0; row <= LCD_MAX_Y; row++) {
+        for (col = 0; col <= LCD_MAX_X; col++) {
         	// clear to desired colour
 	        lcdWrite(colour >> 8, isDATA);
             lcdWrite(colour, isDATA);
@@ -285,7 +286,8 @@ void lcdFillRect(int x, int y, int w, int h, unsigned int colour)
 
     // stream all pixels in one burst
     lcdWrite(CM_RAMWR, isCMD);
-    for (int i = 0; i < w * h; i++)
+    int i;
+    for (i = 0; i < w * h; i++)
     {
         lcdWrite(colour >> 8, isDATA);
         lcdWrite(colour,      isDATA);

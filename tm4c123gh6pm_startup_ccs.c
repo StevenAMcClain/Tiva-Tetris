@@ -58,8 +58,6 @@ extern uint32_t __STACK_TOP;
 
 extern void ADC0_ISR(void);
 extern void GPIOD_ISR(void);     // Pushbuttons.
-extern void Timer2A_ISR(void);   // Pushbutton de-bounce timer.
-extern void Timer2B_ISR(void);   // Pushbutton de-bounce timer.
 extern void Timer0_ISR(void);    // Note change timer.
 extern void Timer1_ISR(void);    // Oscillator timer.
 extern void Timer3A_ISR(void);   // Polyphony timer.
@@ -92,7 +90,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Debug monitor handler
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
-    SysTick_ISR,          // The SysTick handler
+    SysTick_ISR,                            // SysTick handler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
@@ -116,8 +114,8 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Timer 0 subtimer B
     Timer1_ISR,            // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
-    Timer2A_ISR,           // Timer 2 subtimer A
-    Timer2B_ISR,           // Timer 2 subtimer B
+    IntDefaultHandler,           // Timer 2 subtimer A
+    IntDefaultHandler,           // Timer 2 subtimer B
     IntDefaultHandler,                      // Analog Comparator 0
     IntDefaultHandler,                      // Analog Comparator 1
     IntDefaultHandler,                      // Analog Comparator 2

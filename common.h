@@ -10,13 +10,14 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
-#include <tiva.h>
+#include "tm4c123gh6pm.h"
+#include "tiva_register_fields.h"
 
 #include <stdbool.h>
 
 #include "tetris.h"
 
-#define CPU_SPEED 80000000      // 80 MHz
+#define CPU_SPEED 400000000 / 5      // 80 MHz
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
 

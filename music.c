@@ -18,6 +18,7 @@
 
 #include "note_period.h"
 
+
 PRIVATE volatile unsigned int Music_Enabled = 0;
 PRIVATE volatile unsigned int SoundFX_Playing = 0;
 
@@ -192,11 +193,40 @@ PUBLIC void Music_Initialize(void)
     TIMER3->CTL  &= ~TIMER_CTL_TAEN;            // ensure time is disabled.
     TIMER3->CFG   =  TIMER_CFG_32_BIT_TIMER;    // set to 32-bit mode.
     TIMER3->TAMR  =  TIMER_TAMR_TAMR_PERIOD;    // set to periodic mode.
-    TIMER3->TAILR =  _500MS;                    // set note duration to 0.5 seconds.
+    TIMER3->TAILR =  _1MS;                      // set note duration to 0.5 seconds.
     TIMER3->ICR   =  TIMER_ICR_TATOCINT;        // clear the time out interrupt flag.
     TIMER3->IMR  |=  TIMER_IMR_TATOIM;          // enable Timer A time-out interrupt.
 }
 
+PRIVATE void set_note_period(uint32_t note)
+{
+    static unsigned int last_note = 0;
+
+    if (note != last_note)
+    {
+        last_note = note;
+
+        if (note == 0)
+        {
+            TIMER1->CTL &= ~TIMER_CTL_TAEN;  // silence
+        }
+        else
+        {
+            TIMER1->CTL &= ~TIMER_CTL_TAEN;
+
+            TIMER1->TAILR = note;
+//            TIMER1->TAPR     = (note >> 16) & 0xFF;
+//            TIMER1->TAILR    = note & 0xFFFF;
+
+//            int duty = note / 2;     // Always a 50% duty cycle.
+
+//            TIMER1->TAPMR    = (duty>> 16) & 0xFF;
+//            TIMER1->TAMATCHR = duty & 0xFFFF;
+
+            TIMER1->CTL |= TIMER_CTL_TAEN;
+        }
+    }
+}
 
 PUBLIC void Music_On(int m)
 //
@@ -204,7 +234,10 @@ PUBLIC void Music_On(int m)
 {
     Music_Enabled = m;
 
-    TIMER1->CTL |= TIMER_CTL_TAEN;      // Start note oscillator.
+    indexHigh = 0;
+    indexLow = 0;
+
+    // TIMER1->CTL |= TIMER_CTL_TAEN;      // Start note oscillator.
     TIMER0->CTL |= TIMER_CTL_TAEN;      // Start note timer.
 
     TIMER3->TAILR = SIM_NOTE_DURATION;
@@ -233,6 +266,7 @@ PUBLIC void SoundFX_Wait()
 //
 // Wait for any previous sfx to finish.
 {
+    if(Music_Enabled == OFF) return;
     while (SoundFX_Playing) { continue; }
 }
 
@@ -241,6 +275,7 @@ PUBLIC void SoundFX_Start(int x)
 //
 // Start playing music or sound FX.
 {
+    if(Music_Enabled == OFF) return;
     SoundFX_Playing = x;
 }
 
@@ -250,41 +285,10 @@ PUBLIC void SoundFX_Play(int x)
 // Wait for current music of sfx to complete
 //   then start the next one.
 {
+    if(Music_Enabled == OFF) return;
     SoundFX_Wait();
     SoundFX_Start(x);
 }
-
-
-PRIVATE void set_note_period(uint32_t note)
-{
-    static unsigned int last_note = 0;
-
-    if (note != last_note)
-    {
-        last_note = note;
-
-        if (note == 0)
-        {
-//            TIMER1->CTL &= ~TIMER_CTL_TAEN;  // silence
-        }
-        else
-        {
-            TIMER1->CTL &= ~TIMER_CTL_TAEN;
-
-            TIMER1->TAILR = note;
-//            TIMER1->TAPR     = (note >> 16) & 0xFF;
-//            TIMER1->TAILR    = note & 0xFFFF;
-
-//            int duty = note / 2;     // Always a 50% duty cycle.
-
-//            TIMER1->TAPMR    = (duty>> 16) & 0xFF;
-//            TIMER1->TAMATCHR = duty & 0xFFFF;
-
-            TIMER1->CTL |= TIMER_CTL_TAEN;
-        }
-    }
-}
-
 
 PRIVATE void set_next_note_time(uint32_t next)
 {
